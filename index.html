@@ -6,19 +6,19 @@
     <title>Neofitos - Hb 10.24</title>
     <style>
         body {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-    margin: 20px; 
-    padding: 0;
-    background-color: #f5f5f5;
-    color: #333;
-    background-image: url(biblia.jpg);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center 20%; 
-    background-attachment: fixed; 
-    min-height: calc(100vh - 40px); 
-}
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 20px; 
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            background-image: url(biblia.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center 20%; 
+            background-attachment: fixed; 
+            min-height: calc(100vh - 40px); 
+        }
         
         header {
             background-color: #2c3e50;
@@ -133,6 +133,55 @@
             color: white;
             margin-top: 2rem;
         }
+
+        
+        #allTestimonialsModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            overflow: auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #allTestimonialsModal > div {
+            background: white;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        #allTestimonialsModal h2 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #allTestimonialsModal button {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .view-all-btn {
+            font-size: 14px;
+            padding: 5px 10px;
+            margin-left: 10px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -170,14 +219,21 @@
         </div>
         
         <div class="testimonials">
-            <h2>Depoimentos da Comunidade</h2>
+            <h2>Depoimentos da Comunidade 
+                <button id="viewAllBtn" class="view-all-btn">Ver todos</button>
+                <button id="exportBtn" class="view-all-btn">Exportar</button>
+            </h2>
             <div id="testimonialsList">
-                <!-- Os depoimentos serão adicionados aqui via JavaScript -->
-                <div class="testimonial-item">
-                    <div class="testimonial-author">Equipe Neofitos</div>
-                    <div class="testimonial-content">Seja o primeiro a compartilhar como a Palavra de Deus tem trabalhado em sua vida!</div>
-                </div>
+                
             </div>
+        </div>
+    </div>
+    
+   
+    <div id="allTestimonialsModal">
+        <div>
+            <h2>Todos os Depoimentos <button id="closeModalBtn">X</button></h2>
+            <div id="allTestimonialsContainer"></div>
         </div>
     </div>
     
@@ -188,10 +244,71 @@
     </footer>
 
     <script>
-        // Atualiza o ano no footer
+        
         document.getElementById('year').textContent = new Date().getFullYear();
         
-        // Manipula o envio do formulário
+        
+        const initialTestimonials = [
+            {
+                id: 1,
+                name: "Maria Silva",
+                testimonial: "O versículo de Filipenses 4:13 me fortaleceu durante meu tratamento médico. 'Tudo posso naquele que me fortalece' foi meu sustento diário.",
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 2,
+                name: "Carlos Oliveira",
+                testimonial: "Quando perdi meu emprego, Jeremias 29:11 me deu esperança. Deus tem planos de paz e não de calamidade para nós!",
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 3,
+                name: "Anônimo",
+                testimonial: "Romanos 8:28 me ensinou que todas as coisas cooperam para o bem daqueles que amam a Deus. Até nas dificuldades, Ele está no controle.",
+                createdAt: new Date().toISOString()
+            }
+        ];
+
+       
+        function loadTestimonials() {
+            let testimonials = JSON.parse(localStorage.getItem('neofitosTestimonials'));
+            
+            if (!testimonials || testimonials.length === 0) {
+                testimonials = initialTestimonials;
+                localStorage.setItem('neofitosTestimonials', JSON.stringify(testimonials));
+            }
+            
+            displayTestimonials(testimonials);
+            return testimonials;
+        }
+
+        
+        function displayTestimonials(testimonials) {
+            const testimonialsList = document.getElementById('testimonialsList');
+            testimonialsList.innerHTML = '';
+            
+            
+            const recentTestimonials = testimonials.slice(0, 5);
+            
+            recentTestimonials.forEach(testimonial => {
+                const testimonialItem = document.createElement('div');
+                testimonialItem.className = 'testimonial-item';
+                testimonialItem.innerHTML = `
+                    <div class="testimonial-author">${testimonial.name}</div>
+                    <div class="testimonial-content">${testimonial.testimonial}</div>
+                    <small>${formatDate(testimonial.createdAt)}</small>
+                `;
+                testimonialsList.appendChild(testimonialItem);
+            });
+        }
+
+        
+        function formatDate(dateString) {
+            const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('pt-BR', options);
+        }
+
+        
         document.getElementById('testimonialForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -203,29 +320,77 @@
                 return;
             }
             
-            // Cria novo elemento de depoimento
-            const testimonialItem = document.createElement('div');
-            testimonialItem.className = 'testimonial-item';
-            testimonialItem.innerHTML = `
-                <div class="testimonial-author">${name}</div>
-                <div class="testimonial-content">${testimonial}</div>
-            `;
             
-            // Adiciona no topo da lista
-            const testimonialsList = document.getElementById('testimonialsList');
-            testimonialsList.insertBefore(testimonialItem, testimonialsList.firstChild);
+            const testimonials = JSON.parse(localStorage.getItem('neofitosTestimonials')) || [];
+            
+            
+            const newTestimonial = {
+                id: testimonials.length > 0 ? Math.max(...testimonials.map(t => t.id)) + 1 : 1,
+                name,
+                testimonial,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Adiciona novo depoimento no início do array
+            testimonials.unshift(newTestimonial);
+            
+            // Salva no localStorage
+            localStorage.setItem('neofitosTestimonials', JSON.stringify(testimonials));
+            
+            // Atualiza a exibição
+            displayTestimonials(testimonials);
             
             // Limpa o formulário
             document.getElementById('testimonialForm').reset();
             
             alert('Obrigado por compartilhar seu depoimento!');
         });
-        
-        // Toca a música automaticamente (pode não funcionar em alguns navegadores devido a políticas de autoplay)
+
+        // Mostra todos os depoimentos no modal
+        document.getElementById('viewAllBtn').addEventListener('click', function() {
+            const testimonials = JSON.parse(localStorage.getItem('neofitosTestimonials')) || [];
+            const container = document.getElementById('allTestimonialsContainer');
+            
+            container.innerHTML = testimonials.map((testimonial, index) => `
+                <div class="testimonial-item" style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:15px;">
+                    <div class="testimonial-author" style="font-weight:bold;">${testimonial.name} (Depoimento ${index + 1})</div>
+                    <div class="testimonial-content" style="margin-top:5px;">${testimonial.testimonial}</div>
+                    <small>${formatDate(testimonial.createdAt)}</small>
+                </div>
+            `).join('');
+            
+            document.getElementById('allTestimonialsModal').style.display = 'block';
+        });
+
+        // Fecha o modal
+        document.getElementById('closeModalBtn').addEventListener('click', function() {
+            document.getElementById('allTestimonialsModal').style.display = 'none';
+        });
+
+        // Exporta depoimentos como JSON
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            const testimonials = JSON.parse(localStorage.getItem('neofitosTestimonials')) || [];
+            const data = JSON.stringify(testimonials, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'depoimentos-neofitos.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Toca a música automaticamente
         window.addEventListener('DOMContentLoaded', () => {
             const audio = document.querySelector('audio');
-            audio.volume = 0.3; // Define volume mais baixo para música de fundo
+            audio.volume = 0.3;
             audio.play().catch(e => console.log('Autoplay não permitido:', e));
+            
+            // Carrega os depoimentos quando a página é carregada
+            loadTestimonials();
         });
     </script>
 </body>
