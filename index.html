@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neofitos - Hb 10.24</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        
+        .verse {
+            font-style: italic;
+            margin: 1rem 0;
+            font-size: 1.2rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .testimonial-form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #1a252f;
+        }
+        
+        .testimonials {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .testimonial-item {
+            border-bottom: 1px solid #eee;
+            padding: 1.5rem 0;
+        }
+        
+        .testimonial-item:last-child {
+            border-bottom: none;
+        }
+        
+        .testimonial-author {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .testimonial-content {
+            margin-top: 0.5rem;
+        }
+        
+        .music-player {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            background-color: #e8f4f8;
+            border-radius: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            background-color: #2c3e50;
+            color: white;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Neofitos</h1>
+            <div class="verse">"Consideremo-nos uns aos outros para nos incentivarmos ao amor e às boas obras." - Hebreus 10:24</div>
+            <p>Criado para nos ajudar uns aos outros em amor</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="testimonial-form">
+            <h2>Deixe seu depoimento</h2>
+            <form id="testimonialForm">
+                <div class="form-group">
+                    <label for="name">Seu nome (opcional):</label>
+                    <input type="text" id="name" name="name">
+                </div>
+                <div class="form-group">
+                    <label for="testimonial">Compartilhe conosco:</label>
+                    <textarea id="testimonial" name="testimonial" required placeholder="Deixe seu depoimento de conversão, uma devocional, um versículo encorajador e como este versículo o ajudou em um momento de sua vida."></textarea>
+                </div>
+                <button type="submit">Enviar Depoimento</button>
+            </form>
+        </div>
+        
+        <div class="music-player">
+            <h3>Hino de Inspiração</h3>
+            <p>Ouça "Vai valer a pena" enquanto navega:</p>
+            <audio controls autoplay loop>
+                <source src="vai-valer-a-pena.mp4" type="audio/mp4">
+                Seu navegador não suporta o elemento de áudio.
+            </audio>
+        </div>
+        
+        <div class="testimonials">
+            <h2>Depoimentos da Comunidade</h2>
+            <div id="testimonialsList">
+                <!-- Os depoimentos serão adicionados aqui via JavaScript -->
+                <div class="testimonial-item">
+                    <div class="testimonial-author">Equipe Neofitos</div>
+                    <div class="testimonial-content">Seja o primeiro a compartilhar como a Palavra de Deus tem trabalhado em sua vida!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>Neofitos &copy; <span id="year"></span> - Hb 10:24</p>
+        </div>
+    </footer>
+
+    <script>
+        // Atualiza o ano no footer
+        document.getElementById('year').textContent = new Date().getFullYear();
+        
+        // Manipula o envio do formulário
+        document.getElementById('testimonialForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value || 'Anônimo';
+            const testimonial = document.getElementById('testimonial').value;
+            
+            if (testimonial.trim() === '') {
+                alert('Por favor, escreva seu depoimento antes de enviar.');
+                return;
+            }
+            
+            // Cria novo elemento de depoimento
+            const testimonialItem = document.createElement('div');
+            testimonialItem.className = 'testimonial-item';
+            testimonialItem.innerHTML = `
+                <div class="testimonial-author">${name}</div>
+                <div class="testimonial-content">${testimonial}</div>
+            `;
+            
+            // Adiciona no topo da lista
+            const testimonialsList = document.getElementById('testimonialsList');
+            testimonialsList.insertBefore(testimonialItem, testimonialsList.firstChild);
+            
+            // Limpa o formulário
+            document.getElementById('testimonialForm').reset();
+            
+            alert('Obrigado por compartilhar seu depoimento!');
+        });
+        
+        // Toca a música automaticamente (pode não funcionar em alguns navegadores devido a políticas de autoplay)
+        window.addEventListener('DOMContentLoaded', () => {
+            const audio = document.querySelector('audio');
+            audio.volume = 0.3; // Define volume mais baixo para música de fundo
+            audio.play().catch(e => console.log('Autoplay não permitido:', e));
+        });
+    </script>
+</body>
+</html>
